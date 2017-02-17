@@ -621,6 +621,7 @@ end
 -- @return width
 -- @return nChannels
 function getImgRes(seqName)
+  print(seqName)
   if seqName == 'Synth' then return 1000,1000,3 end
   
   local imFile = getDataDir() .. seqName .. "/img1/000001.jpg"

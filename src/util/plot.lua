@@ -60,8 +60,8 @@ function plot(data, winID, winTitle, rawStr, save)
   -- divert to png if no X xAvailable  UPDATE: Always save as png if flag set
   --   print(save)
   if save>0 then
-    --     print('saving')
-    --     sleep(1)
+        print('saving')
+        sleep(1)
     gnuplot.raw('set term pngcairo enhanced font "arial,10" fontscale 1.0 size 500,200;')
 
     -- make sure output directory exists (TODO take care of global vars here)

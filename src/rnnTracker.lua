@@ -400,7 +400,7 @@ function plotProgress(tracks, detections, predTracks, predDA, predEx, winID, win
   plotTab = getTrackPlotTab(tracks:sub(1,maxTargets):float(), plotTab, 1)
   plotTab = getDetectionsPlotTab(detections:sub(1,maxDets):float(), plotTab, nil, da)
   plotTab = getTrackPlotTab(predTracks:sub(1,maxTargets):float(), plotTab, 2, nil, predEx, 1, DA)
-  plot(plotTab, winID, string.format('%s',winTitle), nil, 0) -- do not save first
+  plot(plotTab, winID, string.format('%s',winTitle), nil, 1) -- do not save first -- mohammad: save plot
   sleep(.1)
 end
 
@@ -994,6 +994,7 @@ if sopt.showEx ~=0 then
   plotTab = getExPlotTab(plotTab, predEx, 1)
 end
 -- -- --------------------
+print('plotting now!')
 plot(plotTab,1,'Final Result - '..seqName)
 
 

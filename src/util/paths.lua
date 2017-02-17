@@ -2,7 +2,7 @@
 --- Get directory where sequences are stored.
 function getDataDir()
   -- 'SET PATH TO DATA HERE'
-  local dataDir = '../data/2DMOT2015/train/'
+  local dataDir = '../data/2DMOT2015/'
   if lfs.attributes('/media/sf_vmex','mode') then 			-- virtual machine
     dataDir = '/media/sf_vmex/2DMOT2015/data/'
   elseif lfs.attributes('/home/amilan/research/projects/bmtt-data/','mode') then -- PC in office Adelaide
