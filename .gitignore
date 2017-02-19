@@ -1,2 +1,6 @@
 data
 out
+*.DS_Store
+*.dot
+*.svg
+tmp
