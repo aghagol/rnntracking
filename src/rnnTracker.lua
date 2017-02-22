@@ -80,6 +80,7 @@ sopt.model = getRNNTrackerRoot()..'bin/'..sopt.model_name
 if sopt.model_sign ~= '' then sopt.model = sopt.model..'_'..sopt.model_sign end
 sopt.model = sopt.model..sopt.model_suffix..'.t7'
 
+modelName = sopt.model_name -- mohammad
 
 -- load the model checkpoint
 if not lfs.attributes(sopt.model, 'mode') then
@@ -140,7 +141,7 @@ end
 
 checkCuda()
 
-local train_temp_win = opt.temp_win
+train_temp_win = opt.temp_win
 pm('Training was performed on temp. windows of length '..train_temp_win, 3)
 opt.temp_win = sopt.length
 opt.suppress_x = sopt.suppress_x
@@ -996,6 +997,7 @@ end
 -- -- --------------------
 print('plotting now!')
 plot(plotTab,1,'Final Result - '..seqName)
+-- plot(plotTab, 1, 'out', nil, 1)
 
 
 -- plot second dimension

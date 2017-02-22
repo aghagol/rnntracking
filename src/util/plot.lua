@@ -62,31 +62,19 @@ function plot(data, winID, winTitle, rawStr, save)
   if save>0 then
         print('saving')
         sleep(1)
-    gnuplot.raw('set term pngcairo enhanced font "arial,10" fontscale 1.0 size 500,200;')
+    gnuplot.raw('set term pngcairo enhanced font "arial,10" fontscale 1.0 size 2000,1000;')
 
     -- make sure output directory exists (TODO take care of global vars here)
     local _,_,modelName,modelSign = getCheckptFilename(modelName, opt, modelParams)
-    local outDir = string.format('tmp/%s_%s',modelName, modelSign)
-    if not lfs.attributes(outDir,'mode') then lfs.mkdir(outDir) end
+    local outDir = string.format('/home/mo/github/rnntracking/tmp/%s_%s',modelName, modelSign)
+    if not lfs.attributes(outDir,'mode') then 
+      print(string.format("mkdir %s",outDir))
+      lfs.mkdir(outDir) 
+    end
 
     gnuplot.raw(string.format("set output \"%s/%s.png\"",outDir,winTitle))
     gnuplot.plot(data)
     gnuplot.plotflush()
-
-    -- copy / move to dropbox if possible
-    if lfs.attributes('/home/amilan/Dropbox/research/rnn') and false then
-      local src = string.format("%s/%s.png",outDir,winTitle)
-      if lfs.attributes(src) then
-        local dstFolder = string.format('/home/amilan/Dropbox/research/rnn/%s',outDir)
-        if not lfs.attributes(dstFolder, 'mode') then lfs.mkdir(dstFolder) end
-        local dst = string.format("%s/%s.png",dstFolder,winTitle)
-        -- 	os.rename(src,dst)
-        local cpstr = string.format('cp %s/*.png %s',outDir,dstFolder)
-        -- 	print(cpstr)
-        -- 	abort()
-        os.execute(cpstr)
-      end
-    end
 
   end
 
