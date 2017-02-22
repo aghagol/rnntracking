@@ -65,12 +65,14 @@ cmd:text()
 -- parse input params
 sopt = cmd:parse(arg)
 
+sopt.seq_name = 'train/KITTI-13'
+
 -- abort()
 torch.setdefaulttensortype('torch.FloatTensor')
 
 torch.manualSeed(sopt.seed)
 
--- local suffix = ''
+-- suffix = ''
 -- suffix = '_val'
 -- suffix = '_mota'
 -- concat model name
@@ -134,7 +136,7 @@ getDetTrick = sopt.get_det_trick ~= 0
 if getDetTrick then print('GET DET TRICK SET') end
 
 if realData then
-  local gttracks = getGTTracks(sopt.seq_name)
+  gttracks = getGTTracks(sopt.seq_name)
   if sopt.length == 0 then sopt.length = gttracks:size(2); opt.temp_win = sopt.length end
 end
 
@@ -170,7 +172,7 @@ opt.use_da_input = sopt.da
 DAopt = deepcopy(opt)
 if opt.use_da_input==2 then
 
-  local daRNNfile = getCheckptFilename('testingBFDAONLY', opt, modelParams)
+  daRNNfile = getCheckptFilename('testingBFDAONLY', opt, modelParams)
   -- daRNNfile = string.gsub(daRNNfile,'li0','li1') print('WARNING! FORCE LINP') sleep(0.5)
   daRNNfile = string.gsub(daRNNfile,'mt3','mt1') print('WARNING! FORCE LSTM') sleep(0.1)
   daRNNfile = getRNNTrackerRoot()..'bin/0301DAa-1_mt1_r500_l1_n5_m5_d4_b1_v0_li0.t7'
@@ -182,12 +184,12 @@ if opt.use_da_input==2 then
   -- daRNNfile = 'bin/testingBFDAONLY_mt1_r31_l1_n3_m3_d2_b1_v0_li0_val.t7' -- mse
   -- daRNNfile = 'bin/testingBFDAONLY_mt1_r29_l1_n3_m3_d2_b1_v0_li0_val.t7' -- cnll
 
-  local daDim = math.min(opt.state_dim,2)
+  daDim = math.min(opt.state_dim,2)
   daRNNfile = getRNNTrackerRoot()..'bin/testingBFDAONLY_mt1_r500_l1_n'..opt.max_n..'_m'..opt.max_m..'_d'..daDim..'_b1_v0_li0_val.t7'
   -- daRNNfile = 'bin/0307DAc-'..opt.max_n..'_mt1_r500_l1_n'..opt.max_n..'_m'..opt.max_m..'_d2_b1_v0_li0_val.t7'
   -- -- -- if sopt.da_model ~= nil then
-  -- -- --   local i, t, popen = 0, {}, io.popen
-  -- -- --   local pfile = popen('ls bin/'..sopt.da_model..'*_n'..opt.max_n..'_m'..opt.max_m..'_d2*_val*')
+  -- -- --   i, t, popen = 0, {}, io.popen
+  -- -- --   pfile = popen('ls bin/'..sopt.da_model..'*_n'..opt.max_n..'_m'..opt.max_m..'_d2*_val*')
   -- -- --   print('looking for DA modules...')
   -- -- --   for filename in pfile:lines() do
   -- -- --     i = i + 1
@@ -201,7 +203,7 @@ if opt.use_da_input==2 then
 
 
   if onNetwork() then
-    local parrun = opt.max_n
+    parrun = opt.max_n
     daRNNfile = getRNNTrackerRoot()..'bin/0307DAc-'..parrun..'_mt1_r500_l1_n'..opt.max_n..'_m'..opt.max_m..'_d2_b1_v0_li0_val.t7'
     if opt.da_model ~= nil then
       daRNNfile = getRNNTrackerRoot()..'bin/'..opt.da_model..'c-'..parrun..'_mt1_r500_l1_n'..opt.max_n..'_m'..opt.max_m..'_d2_b1_v0_li0_val.t7'
@@ -264,12 +266,12 @@ DAinit_state = getDAInitState(opt, miniBatchSize)
 -- print(DAinit_state)
 -- abort()
 
-local colorDetsShuffled = false
-local colorDetsShuffled = true
+colorDetsShuffled = false
+colorDetsShuffled = true
 
 ------------------------------------------------
 -------- Scene Info ----------------------------
-local seqName = sopt.seq_name
+seqName = sopt.seq_name
 maxRTargets, maxDets = opt.max_n, opt.max_m
 maxFTargets = opt.max_nf
 maxTargets = maxRTargets+maxFTargets
@@ -295,11 +297,11 @@ imSizes = getImSizes(valSeqTable)
 
 
 -- print(valSeqTable, maxTargets, maxDets)
-local correctDets = sopt.correct_dets~=0
+correctDets = sopt.correct_dets~=0
 if correctDets then print('--- WARNING!!!! DETECTIONS ARE TRIMMED WITH GT ---') end
 
 if seqName == 'art' then
-  local trainingSequences = {'TUD-Campus','TUD-Stadtmitte'}
+  trainingSequences = {'TUD-Campus','TUD-Stadtmitte'}
   opt.synth_training = 1
   opt.gtdet = 1
   imSizes = getImSizes(trainingSequences, imSizes)
@@ -323,7 +325,7 @@ if seqName ~= 'art' then
   maxAllDets = sopt.M
   maxAllTargets = sopt.N
 
-  local n,m = opt.max_n, opt.max_m
+  n,m = opt.max_n, opt.max_m
   maxTargets, maxDets = maxAllTargets, maxAllDets
   maxTargets = math.max(maxTargets,1)
   opt.max_n, opt.max_m = maxTargets, maxDets
@@ -337,7 +339,7 @@ if seqName ~= 'art' then
   -- whats the max det per frame?
   if maxAllTargets<=0 then
 
-    local maxAllDetsPerFrame =  torch.max(torch.sum(AllDetExTab[1],1))
+    maxAllDetsPerFrame =  torch.max(torch.sum(AllDetExTab[1],1))
     maxAllTargets = maxAllDetsPerFrame
     sopt.M = maxAllTargets
     print('Setting N = '..maxAllTargets)
@@ -354,7 +356,7 @@ if seqName ~= 'art' then
   -- AllDetExTab = {}
   --   for k,v in pairs(AllDetsTab) do
   --     AllDetExTab[k] = torch.zeros(maxAllDets*miniBatchSize, opt.temp_win):int()
-  --     local detEx = v:narrow(3,1,1):reshape(maxAllDets*miniBatchSize,opt.temp_win):ne(0)
+  --     detEx = v:narrow(3,1,1):reshape(maxAllDets*miniBatchSize,opt.temp_win):ne(0)
   --     AllDetExTab[k][detEx] = 1
   --   end
   --   print(AllDetExTab)
@@ -379,7 +381,7 @@ end
 function getLocFromFullState(state)
   -- remove velocities estimations
   if opt.vel~=0 then
-    local ind = torch.linspace(1,fullStateDim-1,fullStateDim/2):long()
+    ind = torch.linspace(1,fullStateDim-1,fullStateDim/2):long()
     state = state:index(3,ind)
   end
   return state
@@ -390,11 +392,11 @@ function plotProgress(tracks, detections, predTracks, predDA, predEx, winID, win
   predDA = predDA:sub(1,maxTargets):float()
   if exVar then predEx = predEx:sub(1,maxTargets):float() else predEx = nil end
 
-  local DA = getLabelsFromLL(predDA)
+  DA = getLabelsFromLL(predDA)
   plotTab={}
 
-  local N,F,D=getDataSize(detections:sub(1,maxDets))
-  local da = torch.IntTensor(N,F)
+  N,F,D=getDataSize(detections:sub(1,maxDets))
+  da = torch.IntTensor(N,F)
   if colorDetsShuffled then
     for i=1,maxDets do da[i]=(torch.ones(1,opt.temp_win)*i) end -- color dets shuffled
   end
@@ -408,14 +410,14 @@ end
 
 ------------   MAIN  PREDICTION   -----------
 -- ####################################### --
-local initStateGlobal = clone_list(init_state)
+initStateGlobal = clone_list(init_state)
 for k,v in pairs(initStateGlobal) do initStateGlobal[k] = v:sub(1,1) end
 
 
-local T = opt.temp_win - opt.batch_size
+T = opt.temp_win - opt.batch_size
 
-local rnn_state = {[0] = initStateGlobal}
-local Allrnn_states = {}
+rnn_state = {[0] = initStateGlobal}
+Allrnn_states = {}
 for tar=1,maxAllTargets do
   Allrnn_states[tar] = {}
   for t=1,T do Allrnn_states[tar][t] = {} end
@@ -426,8 +428,8 @@ for tar=1,maxAllTargets do
 end
 
 
-local predictions = {}
-local Allpredictions = {}
+predictions = {}
+Allpredictions = {}
 for tar=1,maxAllTargets do
   Allpredictions[tar] = {}
   for t=1,T do
@@ -443,10 +445,10 @@ end
 -- print(Allpredictions)
 -- abort()
 
-local predictionsTemp = {}
-local stateLocs, stateLocs2, stateDA, stateEx, statePred = {}, {}, {}, {}, {}
+predictionsTemp = {}
+stateLocs, stateLocs2, stateDA, stateEx, statePred = {}, {}, {}, {}, {}
 
-local AllstateLocs, AllstateLocs2, AllstateDA, AllstateEx, AllstatePred = {}, {}, {}, {}, {}
+AllstateLocs, AllstateLocs2, AllstateDA, AllstateEx, AllstatePred = {}, {}, {}, {}, {}
 for tar=1,maxAllTargets do
   AllstateLocs[tar]={} for t=1,T do AllstateLocs[tar][t] = {} end
   AllstateLocs2[tar]={}for t=1,T do AllstateLocs2[tar][t] = {} end
@@ -455,7 +457,7 @@ for tar=1,maxAllTargets do
   AllstatePred[tar]={}for t=1,T do AllstatePred[tar][t] = {} end
 end
 
-local T = opt.temp_win - opt.batch_size
+T = opt.temp_win - opt.batch_size
 tracks = realTracksTab[1]
 detections = realDetsTab[1]:clone()
 labels = realLabTab[1]:clone() -- only for debugging
@@ -472,14 +474,14 @@ if getDetTrick then alldetections = AllDetsTab[1]:clone() end
 -----------------------------
 
 -- initialize hidden state with zeros
-local DAinitStateGlobal = clone_list(DAinit_state)
-local DArnn_state = {[0] = DAinitStateGlobal}
-local DApredictions = {}
-local allPredDA = torch.zeros(maxAllTargets,T,maxAllDets+1)
-local allPredEx = torch.zeros(maxTargets, T, 1)
-local pclone=protos.rnn:clone()
+DAinitStateGlobal = clone_list(DAinit_state)
+DArnn_state = {[0] = DAinitStateGlobal}
+DApredictions = {}
+allPredDA = torch.zeros(maxAllTargets,T,maxAllDets+1)
+allPredEx = torch.zeros(maxTargets, T, 1)
+pclone=protos.rnn:clone()
 
-local protosClones = {}
+protosClones = {}
 for tar=1,maxAllTargets do
   table.insert(protosClones, protos.rnn:clone())
 end
@@ -510,8 +512,8 @@ for t=1,T do
 
   --
   if opt.use_da_input == 2 then
-    local rnninp, _ = getRNNInput(t, rnn_state, predictions)		-- get combined RNN input table
-    local Predlst = pclone:forward(rnninp)	-- do one forward tick
+    rnninp, _ = getRNNInput(t, rnn_state, predictions)		-- get combined RNN input table
+    Predlst = pclone:forward(rnninp)	-- do one forward tick
     predictionsTemp[t] = {}
     for k,v in pairs(Predlst) do predictionsTemp[t][k] = v:clone() end -- deep copy
     _, statePred = decode(predictionsTemp, t)  -- get predicted state
@@ -527,17 +529,17 @@ for t=1,T do
     --     sleep(2)
 
     if getDetTrick then
-      local pwdDim = math.min(2,stateDim)
+      pwdDim = math.min(2,stateDim)
 
-      local maxDist = 0.1
-      local inpPred = statePred:reshape(maxTargets,stateDim):narrow(2,1,pwdDim)
+      maxDist = 0.1
+      inpPred = statePred:reshape(maxTargets,stateDim):narrow(2,1,pwdDim)
       --       print(inpPred)
-      local det_allx = alldetections[{{},{t+1},{1,pwdDim}}]:reshape(maxAllDets,pwdDim);
-      local det_x = detections[{{},{t+1},{1,pwdDim}}]:reshape(maxDets,pwdDim);
+      det_allx = alldetections[{{},{t+1},{1,pwdDim}}]:reshape(maxAllDets,pwdDim);
+      det_x = detections[{{},{t+1},{1,pwdDim}}]:reshape(maxDets,pwdDim);
       --       print(det_allx)
 
 
-      local allDist = torch.ones(maxTargets,maxAllDets) * 100
+      allDist = torch.ones(maxTargets,maxAllDets) * 100
       for tar=1,maxTargets do
         for det=1,maxAllDets do
           if det_allx[det][1] ~= 0 then
@@ -546,7 +548,7 @@ for t=1,T do
         end
       end
       print(allDist)
-      local mv, mi = torch.min(allDist,2) mv = mv:reshape(maxTargets) mi = mi:reshape(maxTargets)
+      mv, mi = torch.min(allDist,2) mv = mv:reshape(maxTargets) mi = mi:reshape(maxTargets)
       print(mv)
 
       --       print(detections)
@@ -561,9 +563,9 @@ for t=1,T do
     end
 
     -- Do Data Association --
-    local DArnninp, DArnn_state = getDARNNInput(t,DArnn_state, DApredictions, statePred)
+    DArnninp, DArnn_state = getDARNNInput(t,DArnn_state, DApredictions, statePred)
     --     print(DArnninp)
-    local DAlst = DAprotos.rnn:forward(DArnninp)
+    DAlst = DAprotos.rnn:forward(DArnninp)
     DApredictions[t] = {}
     for k,v in pairs(DAlst) do DApredictions[t][k] = v:clone() end -- deep copy
 
@@ -576,9 +578,9 @@ for t=1,T do
     --     abort()
     --normalize for plotting
 
-    --     local takeMaxProb = true
-    --     local takeMaxProb = false
-    local takeMaxProb = sopt.maxProb ~= 0
+    --     takeMaxProb = true
+    --     takeMaxProb = false
+    takeMaxProb = sopt.maxProb ~= 0
 
     --     DAtmpDA = torch.exp(DAtmpDA)
     --     DAtmpDA = torch.pow(DAtmpDA,6)
@@ -587,12 +589,12 @@ for t=1,T do
       --       DAtmpDA = torch.log(DAtmpDA)
       --       DAtmpDA = torch.pow(DAtmpDA,12)
       for tar=1,maxTargets do
-        local probLine = torch.exp(DAtmpDA[tar]:reshape(nClasses))
+        probLine = torch.exp(DAtmpDA[tar]:reshape(nClasses))
         probLine = probLine / torch.sum(probLine)
         -- 	print(torch.exp(probLine))
 
         if takeMaxProb then
-          local mv, mi = torch.max(torch.exp(probLine):reshape(1,nClasses),2)
+          mv, mi = torch.max(torch.exp(probLine):reshape(1,nClasses),2)
           -- 	  print(mv,mi)
           mv=mv:squeeze()
           mi=mi:squeeze()
@@ -613,12 +615,12 @@ for t=1,T do
       --       DAtmpDA = torch.log(torch.pow(torch.exp(DAtmpDA),12))
 
       --       print(torch.exp(DAtmpDA))
-      local doNormalize = true
-      --       local doNormalize = false
+      doNormalize = true
+      --       doNormalize = false
       if doNormalize then
         -- normalize
         for tar=1,maxTargets do
-          local probLine = torch.exp(DAtmpDA[tar]:reshape(nClasses))
+          probLine = torch.exp(DAtmpDA[tar]:reshape(nClasses))
           probLine = probLine / torch.sum(probLine)
 
           probLine = torch.log(probLine)
@@ -630,9 +632,9 @@ for t=1,T do
 
       if takeMaxProb then
         for tar=1,maxTargets do
-          local probLine = torch.exp(DAtmpDA[tar]:reshape(nClasses))
+          probLine = torch.exp(DAtmpDA[tar]:reshape(nClasses))
           probLine = probLine / torch.sum(probLine)
-          local mv, mi = torch.max(torch.exp(probLine):reshape(1,nClasses),2)
+          mv, mi = torch.max(torch.exp(probLine):reshape(1,nClasses),2)
           mv=mv:squeeze()  mi=mi:squeeze()
           probLine:fill(0)
           probLine[mi] = 1
@@ -649,28 +651,28 @@ for t=1,T do
 
 
     ---- resolve with Hungarian
-    local doHA = sopt.resHA ~= 0
+    doHA = sopt.resHA ~= 0
     --     print(doHA)
     --     abort()
-    --     local doHA = false
+    --     doHA = false
 
     if doHA then
       --       abort()
-      local missThr = 0.05;
-      local allDist=DAtmpDA * (-1)
+      missThr = 0.05;
+      allDist=DAtmpDA * (-1)
       if maxTargets>1 then
         allDist=allDist:cat(torch.FloatTensor(maxTargets,maxTargets-1):fill(torch.exp(missThr)))
       end
 
       --     print(allDist)
-      local status, ass = pcall(hungarianL,allDist)
+      status, ass = pcall(hungarianL,allDist)
       if status then
 
 
-        local lab = torch.zeros(maxTargets,nClasses):float()
+        lab = torch.zeros(maxTargets,nClasses):float()
         lab:fill(0)
         for tar=1,maxTargets do
-          local assClass = ass[tar][2]
+          assClass = ass[tar][2]
           if assClass>nClasses then assClass=nClasses end
           lab[tar][assClass] = 1
           lab[tar] = makePseudoProb(lab[tar]:reshape(nClasses):float(),.001)
@@ -711,17 +713,17 @@ for t=1,T do
   --       for i=1,maxTargets do allPredDA[{{i},{t},{}}] = globalLAB[i]:clone() end
 
 
-  local allLst={}
+  allLst={}
   for tar=1,maxAllTargets do
     -- 	print(tar)
-    local rnninp = {}
+    rnninp = {}
     -- 	print(Allrnninps[tar])
     for i=1,#Allrnninps[tar] do table.insert(rnninp, Allrnninps[tar][i]:clone()) end
     -- 	print(rnninp[1])
     -- 	print(rnninp[3])
     -- 	abort()
 
-    local lst =protosClones[tar]:forward(rnninp)	-- do one forward tick
+    lst =protosClones[tar]:forward(rnninp)	-- do one forward tick
 
     -- 	print('for target '..tar)
     -- 	print('prediction ') print(lst[3])
@@ -730,11 +732,11 @@ for t=1,T do
   end
 
 
-  local tmpRNNstates = {}
+  tmpRNNstates = {}
   for tar=1,maxAllTargets do
     for k,v in pairs(allLst[tar]) do Allpredictions[tar][t][k] = v:clone() end -- deep copy
 
-    local rnn_state = {}
+    rnn_state = {}
     for i=1,#init_state do
       table.insert(rnn_state, allLst[tar][i])
     end -- extract the state, without output
@@ -768,7 +770,7 @@ for t=1,T do
 
   -- prediction for t (t+1)
   --       stateLocs[t], stateLocs2[t], stateDA[t] = decode(predictions, t)
-  local A,B,C = decode(Allpredictions, t)
+  A,B,C = decode(Allpredictions, t)
 
   for tar=1,maxAllTargets do
     AllstateLocs[tar] = A[tar]:clone()
@@ -785,18 +787,18 @@ for t=1,T do
 end
 -- ####################################### --
 -- abort()
--- local predTracks, predTracks2, predDA, predEx = decode(predictions)
-local AllpredTracks, AllpredTracks2, allpredDA, allpredEx = decode(Allpredictions)
+-- predTracks, predTracks2, predDA, predEx = decode(predictions)
+AllpredTracks, AllpredTracks2, allpredDA, allpredEx = decode(Allpredictions)
 -- abort()
 -- print(AllpredTracks[1])
 -- abort()
 -- print(AllpredTracks[2])
 -- abort()
 
-local predTracks = torch.zeros(1,T,stateDim)
-local predTracks2 = torch.zeros(1,T,stateDim)
-local predDA = torch.zeros(1,T,nClasses)
-local predEx = torch.zeros(1,T,1)
+predTracks = torch.zeros(1,T,stateDim)
+predTracks2 = torch.zeros(1,T,stateDim)
+predDA = torch.zeros(1,T,nClasses)
+predEx = torch.zeros(1,T,1)
 for tar=1,maxAllTargets do
   predTracks = predTracks:cat(AllpredTracks[tar], 1)
   predTracks2 = predTracks2:cat(AllpredTracks2[tar], 1)
@@ -838,7 +840,7 @@ predDA=allPredDA:clone()
 
 
 predTracks = getLocFromFullState(predTracks)
-local predExBin=getPredEx(predEx)
+predExBin=getPredEx(predEx)
 --print(predExBin)
 -- printDim(predTracks)
 -- abort()
@@ -851,7 +853,7 @@ predLab = getLabelsFromLL(predDA, false) -- true for Hungarian 1-to-1 assignment
 -- print(predLab)
 -- abort()
 -- predLab = torch.cat(torch.linspace(1,maxAllTargets,maxAllTargets):int():reshape(maxAllTargets,1), predLab, 2)
--- local predLabRaw = getLabelsFromLL(predDA, false)
+-- predLabRaw = getLabelsFromLL(predDA, false)
 -- pad 1,2,3...
 
 -- predLabRaw = torch.cat(torch.linspace(1,maxTargets,maxTargets):int():reshape(maxTargets,1), predLabRaw, 2)
@@ -861,14 +863,14 @@ predLab = getLabelsFromLL(predDA, false) -- true for Hungarian 1-to-1 assignment
 -- print('Ground Truth DA')
 -- print(labels)
 -- print('Mispredicted')
--- local misDA = torch.abs(predLabRaw:float()-labels)
+-- misDA = torch.abs(predLabRaw:float()-labels)
 -- misDA[misDA:ne(0)]=1
 -- print(misDA)
--- local N,F=getDataSize(labels)
+-- N,F=getDataSize(labels)
 -- print(string.format('Mispredicted labels: %d = %.2f %%',torch.sum(misDA), torch.sum(misDA)*100/(F*N)))
 
-local finalTracks = predTracks:clone()
-local finalTracks2 = predTracks2:clone()
+finalTracks = predTracks:clone()
+finalTracks2 = predTracks2:clone()
 
 
 -- printDim(finalTracks2)
@@ -878,14 +880,14 @@ local finalTracks2 = predTracks2:clone()
 -- print(finalTracks)
 -- abort()
 
-local N,F,D = getDataSize(finalTracks)
+N,F,D = getDataSize(finalTracks)
 -- print(N,F,D)
 -- abort()
-local fixedTracks = torch.zeros(1,F,D)
-local fixedTracks2 = torch.zeros(1,F,D)
-local fixedEx = torch.zeros(1,F):int()
+fixedTracks = torch.zeros(1,F,D)
+fixedTracks2 = torch.zeros(1,F,D)
+fixedEx = torch.zeros(1,F):int()
 for tar=1,N do
-  local started, finished=0,0
+  started, finished=0,0
   for t=1,F do
     if (t==1 and predExBin[tar][t]==1) or (t>1 and predExBin[tar][t]==1 and predExBin[tar][t-1]==0) then
       started=t
@@ -894,7 +896,7 @@ for tar=1,N do
       finished=t
     end
     if started>0 and finished>0 then
-      local tmpTrack = torch.zeros(1,F,D)
+      tmpTrack = torch.zeros(1,F,D)
       tmpTrack[{{1},{started,finished},{}}] = finalTracks[{{tar},{started,finished},{}}]
       fixedTracks=fixedTracks:cat(tmpTrack,1)
 
@@ -932,22 +934,22 @@ end
 -- predEx=nil
 -- printDim(finalTracks)
 
-local N,F,D=getDataSize(detections)
-local da = torch.IntTensor(N,F)
+N,F,D=getDataSize(detections)
+da = torch.IntTensor(N,F)
 if colorDetsShuffled then for i=1,maxDets do da[i]=i end end
 
 -- zero out inexisting tracks
-local ztracks = tracks:clone()
-local N,F,D=getDataSize(tracks)
+ztracks = tracks:clone()
+N,F,D=getDataSize(tracks)
 -- for i=1,N do for t=1,F do if exlabels[i][t]==0 then ztracks[i][t]=0 end end end
 plotTab = {}
 -- print(ztracks)
 -- plotTab = getTrackPlotTab(ztracks, plotTab, 1)  -- ground truth
 
-local trueDets = alldetexlabels:reshape(maxAllDets, opt.temp_win, 1):expand(maxAllDets, opt.temp_win, stateDim)
-local virtDets = alldetexlabels:eq(0):reshape(maxAllDets, opt.temp_win, 1):expand(maxAllDets, opt.temp_win, stateDim)
-local realDets = alldetections:clone():cmul(trueDets:float())
-local virtDets = alldetections:clone():cmul(virtDets:float())
+trueDets = alldetexlabels:reshape(maxAllDets, opt.temp_win, 1):expand(maxAllDets, opt.temp_win, stateDim)
+virtDets = alldetexlabels:eq(0):reshape(maxAllDets, opt.temp_win, 1):expand(maxAllDets, opt.temp_win, stateDim)
+realDets = alldetections:clone():cmul(trueDets:float())
+virtDets = alldetections:clone():cmul(virtDets:float())
 
 plotTab = getDetectionsPlotTab(realDets, plotTab, nil, nil)
 if getDetTrick then plotTab = getDetectionsPlotTab(AllDetsTab[1], plotTab, nil) end
@@ -1004,7 +1006,7 @@ plot(plotTab,1,'Final Result - '..seqName)
 
 
 --- Set inex. to 0
-local N,F,D = getDataSize(finalTracks)
+N,F,D = getDataSize(finalTracks)
 -- print(N,F,D)
 -- abort()
 for t=1,F do
@@ -1022,20 +1024,20 @@ end
 -- denormalize and write out
 -- realTracksTab = normalizeData(AllTracksTab, AllunnormDetsTab, false, maxAllTargets, maxAllDets, realSeqNames)
 
-local origFinalTracks = finalTracks:clone() -- normalized
+origFinalTracks = finalTracks:clone() -- normalized
 finalTracksTab={}
 table.insert(finalTracksTab, finalTracks)
 
 if realData then
   finalTracksTab = normalizeData(finalTracksTab, AllunnormDetsTab, true, maxAllTargets, maxAllDets, realSeqNames)
 end
-local writeResTensor = finalTracksTab[1]
+writeResTensor = finalTracksTab[1]
 
 
 -- move result forward in time if necessary
 if sopt.fframe ~= nil and sopt.fframe>1 then
-  local N,F,D = getDataSize(writeResTensor)
-  local prePad = torch.zeros(N,sopt.fframe-1,D)
+  N,F,D = getDataSize(writeResTensor)
+  prePad = torch.zeros(N,sopt.fframe-1,D)
   writeResTensor=prePad:cat(writeResTensor, 2)
 end
 
@@ -1047,7 +1049,7 @@ writeResTensor = writeResTensor:cat(predEx, 3)
 writeResTensor = writeResTensor:sub(1,maxAllTargets)
 
 
-local outDir = getResDir(sopt.model_name, sopt.model_sign)
+outDir = getResDir(sopt.model_name, sopt.model_sign)
 mkdirP(outDir)
 print(outDir)
 writeTXT(writeResTensor, string.format("%s/%s.txt",outDir, seqName))
