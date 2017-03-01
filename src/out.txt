@@ -1,0 +1,121 @@
+Loading model ... /home/mo/github/rnntracking/src/../bin/rnnTracker_r300_l1_n1_m1_d4.t7	
+------ T R I M M I N G !!! ----------	
+ model rnn_s num_l max_n max_m state	
+     3   300     1     1     1     4	
+train/KITTI-13	
+Synth	
+Preparing real data...	
+train/KITTI-13	
+50	
+  1
+ 50
+  1
+[torch.LongStorage of size 3]
+
+real	
+Normalizing data...	
+   ...done	
+{
+  model_split : 0
+  dalink : 1
+  max_n : 1
+  freq_reshuffle : 0
+  init_from : ""
+  plot_every : 10000
+  statePredIndex2 : 3
+  det_false : 0.2
+  rnn_size : 300
+  lrng_rate : 3e-05
+  dropout : 0.03
+  random_epoch : 0
+  seed : 3
+  kappa : 1
+  miss_thr : 0.05
+  synth_valid : 1
+  verbose : 2
+  exPredIndex : 4
+  det_thr : 0.03
+  order_dets : 0
+  lambda : 1
+  einp : 1
+  use_gt_input : 0
+  xi : 1
+  norm_mean : 1
+  exSmoothPredIndex : 5
+  real_data : 1
+  fixed_n : 1
+  nu : 0.5
+  max_epochs : 100000
+  batch_size : 1
+  reshuffle_dets : 0
+  pert_training : 0
+  det_noise : 0.01
+  synth_training : 1
+  forget_bias : 1
+  eval_conf : "config/XPOS.ini"
+  modelParams : 
+    {
+      1 : "model_index"
+      2 : "rnn_size"
+      3 : "num_layers"
+      4 : "max_n"
+      5 : "max_m"
+      6 : "state_dim"
+    }
+  lrng_rate_decay_after : 10000
+  linp : 0
+  trim_tracks : 1
+  use_da_input : 4
+  training_file : ""
+  ex_thr : 0.5
+  loss_type : 1
+  full_set : 1
+  opencl : 0
+  statePredIndex : 2
+  detlink : 1
+  one_hot : 1
+  max_m : 1
+  gpuid : -1
+  max_nf : 0
+  decay_rate : 0.97
+  suppress_x : 0
+  rand_par_rng : 0.08
+  config : "config/0314Ea-3.txt"
+  mini_batch_size : 1
+  dummy_weight : 1
+  grad_clip : 0.1
+  save_plots : 0
+  dummy_det_val : 0
+  print_every : 1000
+  norm_std : -1
+  num_layers : 1
+  eval_mot15 : 1
+  model_index : 3
+  mu : 0
+  det_fail : 0.1
+  vel : 0
+  profiler : 0
+  real_dets : 1
+  daPredIndex : 4
+  temp_win : 50
+  model : "rnn"
+  eval_val_every : 10000
+  state_dim : 4
+  lrng_rate_decay : 0.95
+}
+Preparing real data...	
+train/KITTI-13	
+50	
+  1
+ 50
+  1
+[torch.LongStorage of size 3]
+
+real	
+Normalizing data...	
+   ...done	
+Setting N = 5	
+plotting now!	
+saving	
+Getting results from /home/mo/github/rnntracking/src/../out/rnnTracker_r300_l1_n1_m1_d4/	
+/home/mo/github/rnntracking/src/../out/rnnTracker_r300_l1_n1_m1_d4/	

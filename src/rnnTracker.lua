@@ -512,7 +512,7 @@ for t=1,T do
 
   --
   if opt.use_da_input == 2 then
-    rnninp, _ = getRNNInput(t, rnn_state, predictions)		-- get combined RNN input table
+    rnninp, _ = getRNNInput(t, rnn_state, predictions) -- get combined RNN input table
     Predlst = pclone:forward(rnninp)	-- do one forward tick
     predictionsTemp[t] = {}
     for k,v in pairs(Predlst) do predictionsTemp[t][k] = v:clone() end -- deep copy
@@ -699,7 +699,10 @@ for t=1,T do
 
 
 
-  Allrnninps, Allrnn_states = getRNNInput(t, Allrnn_states, Allpredictions)		-- get combined RNN input table
+  Allrnninps, Allrnn_states = getRNNInput(t, Allrnn_states, Allpredictions)  -- get combined RNN input table
+
+
+
 
 
 --  print(allPredDA)
@@ -998,8 +1001,8 @@ if sopt.showEx ~=0 then
 end
 -- -- --------------------
 print('plotting now!')
-plot(plotTab,1,'Final Result - '..seqName)
--- plot(plotTab, 1, 'out', nil, 1)
+-- plot(plotTab,1,'Final Result - '..seqName)
+plot(plotTab, 1, 'out', nil, 1)
 
 
 -- plot second dimension
