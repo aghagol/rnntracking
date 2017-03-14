@@ -59,6 +59,7 @@ cmd:option('-det_false',0.2,'Detection false alarm rate')
 cmd:option('-detConfThr',1e-5,'Prune threshold for det confidence')
 cmd:option('-minLife',0,'Prune track lengths')
 cmd:option('-seed',12,'Random seed')
+cmd:option('-visualize',1,'plot yes[1]/no[0]?') -- mohammad: option to not plot
 
 
 cmd:text()
@@ -994,7 +995,9 @@ if sopt.showEx ~=0 then
   plotTab = getExPlotTab(plotTab, predEx, 1)
 end
 -- -- --------------------
-plot(plotTab,1,'Final Result - '..seqName)
+if sopt.visualize==1 then -- mohammad: option not to plot
+  plot(plotTab,1,'Final Result - '..seqName)
+end
 
 
 -- plot second dimension
