@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+for seqname in $(ls data)
+do
+    echo "Working on $seqname"
+    th rnnTracker.lua -seq_name "$seqname" -length 1000 -visualize 0 > "log/$seqname.txt"
+done
+
