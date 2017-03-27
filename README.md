@@ -17,6 +17,7 @@ bibtex:
 }
 ```
 
+**Mohammad**: My understanding is that the overall network was designed to be a recurrent network inside a recurrent network: Each frame is passed to the RNN module (for prediction/update) in each "outer" iteration and each "inner" iteration (LSTM module for data association) outputs one target at a time. In this sense, `t` indicates the outer iteration number while `i` indicates the inner iteration number. However, in paper's implementation, `i=1` always since `N=1`. Multi-target tracking is performed by cloning the RNN+LSTM network as many times as the maximum number of possible targets and running all of them in parallel. Does this make sense to you?
 
 # Dependencies
 ## Required
